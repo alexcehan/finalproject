@@ -16,7 +16,7 @@ import java.sql.Time;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "destinations")
+@Table(name = "destination")
 public class DestinationEntity {
 
     @Id

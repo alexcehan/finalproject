@@ -26,21 +26,23 @@ public class FlightEntity {
 
     private Date date;
 
+    @Column(name = "departure_time")
     private Time time;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "destination(id)", referencedColumnName = "iddestination")
     private DestinationEntity destination;
+////
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "airplane(id)", referencedColumnName = "idairplanes")
+//    private AirplaneEntity airplane;
+//
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "crew(id)", referencedColumnName = "idcrews")
+//    private CrewEntity crew;
+//
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "airplane(id)", referencedColumnName = "idairplanes")
-    private AirplaneEntity airplane;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "crew(id)", referencedColumnName = "idcrews")
-    private CrewEntity crew;
-
-    private Integer available_firstClass_seats;
+    private Integer available_firstclass_seats;
 
     private Integer available_bussiness_seats;
 
