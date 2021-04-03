@@ -1,4 +1,4 @@
-package com.siit.finalproject.lria.mapper;
+package com.siit.finalproject.lria.mapper.airplane;
 
 import com.siit.finalproject.lria.domain.entity.AirplaneEntity;
 import com.siit.finalproject.lria.domain.model.AirplaneDto;
@@ -13,9 +13,9 @@ public class AirplaneEntityToAirplaneDtoMapper {
                 .equipment(airplaneEntity.getEquipment())
                 .manufacturer(airplaneEntity.getManufacturer())
                 .age(airplaneEntity.getAge())
-                .first_class_seats(airplaneEntity.getFirst_class_seats())
-                .bussiness_class_seats(airplaneEntity.getBussiness_class_seats())
-                .economic_class_seats(airplaneEntity.getEconomic_class_seats())
+//                .first_class_seats(airplaneEntity.getFirst_class_seats())
+//                .bussiness_class_seats(airplaneEntity.getBussiness_class_seats())
+//                .economic_class_seats(airplaneEntity.getEconomic_class_seats())
                 .build();
     }
 }

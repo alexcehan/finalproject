@@ -13,13 +13,13 @@ public class ClientDtoUpdateRequest {
 
     private Integer idclients;
 
-    private String first_name;
+    private String firstName;
 
-    private String last_name;
+    private String lastName;
 
     private Integer age;
 
-    private Integer destination;
+    private Integer flightId;
 
-    private Integer ticket;
+    private Integer ticketId;
 }

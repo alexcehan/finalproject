@@ -21,9 +21,9 @@ public class AirplaneDto {
 
     private Integer age;
 
-    private Integer first_class_seats;
-
-    private Integer bussiness_class_seats;
-
-    private Integer economic_class_seats;
+//    private Integer first_class_seats;
+//
+//    private Integer bussiness_class_seats;
+//
+//    private Integer economic_class_seats;
 }

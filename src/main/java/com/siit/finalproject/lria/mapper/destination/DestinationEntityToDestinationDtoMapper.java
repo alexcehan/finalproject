@@ -1,4 +1,4 @@
-package com.siit.finalproject.lria.mapper;
+package com.siit.finalproject.lria.mapper.destination;
 
 import com.siit.finalproject.lria.domain.entity.DestinationEntity;
 import com.siit.finalproject.lria.domain.model.DestinationDto;

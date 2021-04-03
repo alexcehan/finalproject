@@ -13,15 +13,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ClientDtoResponse {
 
-    private Integer idclients;
+    private Integer id;
 
-    private String first_name;
+    private String firstName;
 
-    private String last_name;
+    private String lastName;
 
     private Integer age;
 
-    private DestinationDto destination;
+    private FlightDtoResponse flight;
 
     private TicketDto ticket;
 }

@@ -17,7 +17,7 @@ import java.sql.Time;
 @NoArgsConstructor
 public class FlightDtoResponse {
 
-    private Integer idflight;
+    private Integer id;
 
     private Date date;
 
@@ -29,9 +29,5 @@ public class FlightDtoResponse {
 
     private CrewDto crew;
 
-    private Integer available_firstclass_seats;
 
-    private Integer available_bussiness_seats;
-
-    private Integer available_economy_seats;
 }

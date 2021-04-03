@@ -30,17 +30,17 @@ public class FlightEntity {
     private Time time;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "destination(id)", referencedColumnName = "iddestination")
+    @JoinColumn(name = "destination_id", referencedColumnName = "iddestination")
     private DestinationEntity destination;
-////
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "airplane(id)", referencedColumnName = "idairplanes")
-//    private AirplaneEntity airplane;
 //
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "crew(id)", referencedColumnName = "idcrews")
-//    private CrewEntity crew;
-//
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "airplane_id", referencedColumnName = "idairplanes")
+    private AirplaneEntity airplane;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "crew_id", referencedColumnName = "idcrews")
+    private CrewEntity crew;
+
 
     private Integer available_firstclass_seats;
 

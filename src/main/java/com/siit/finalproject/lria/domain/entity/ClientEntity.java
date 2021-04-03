@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
@@ -16,6 +17,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "clients")
+
 public class ClientEntity {
 
     @Id
@@ -23,17 +25,19 @@ public class ClientEntity {
     @Column(name = "idclients")
     private Integer id;
 
-    private String first_name;
 
-    private String last_name;
+    private String firstName;
+
+
+    private String lastName;
 
     private Integer age;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "destination", referencedColumnName = "iddestination")
-    private DestinationEntity destination;
+    @JoinColumn(name = "flightid", referencedColumnName = "idflights")
+    private FlightEntity flight;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ticket", referencedColumnName = "idticket_type")
+    @JoinColumn(name = "ticketid", referencedColumnName = "idticket_type")
     private TicketEntity ticket;
 }

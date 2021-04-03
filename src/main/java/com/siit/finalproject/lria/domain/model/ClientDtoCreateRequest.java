@@ -15,18 +15,18 @@ public class ClientDtoCreateRequest {
 
     private Integer id;
 
-    @NotBlank
-    private String first_name;
 
-    @NotBlank
-    private String last_name;
+    private String firstName;
 
-    @NotBlank
+
+    private String lastName;
+
+
     private Integer age;
 
-    private Integer destination;
+    private Integer flightId;
 
-    private Integer ticket;
+    private Integer ticketId;
 
 
 
