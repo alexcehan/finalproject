@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface FlightRepository extends JpaRepository<FlightEntity, Integer> {
 
+
     List<FlightEntity> findAllByDate(Date date);
     List<FlightEntity> findAllByDestination(DestinationEntity city);
     List<FlightEntity> findAllByDestinationAndDate(DestinationEntity city, Date date);

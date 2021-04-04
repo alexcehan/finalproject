@@ -46,9 +46,17 @@ public class ClientRestController {
         return clientService.getClientByFirstAndLastName(firstName, lastName);
     }
 
+    //return clients by flightId
+    @GetMapping(value = "/clientsByFlightId", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ClientDtoResponse> getClientsByFlightId(@RequestParam(name = "flightId")Integer flightId) {
+        return clientService.getClientByFlightId(flightId);
+    }
+
 
     @PostMapping(consumes = "application/json", produces = MediaType.APPLICATION_JSON_VALUE)
     public ClientDtoResponse createClient(@RequestBody @Valid ClientDtoCreateRequest clientDtoCreateRequest) {
         return clientService.createClient(clientDtoCreateRequest);
     }
+
+    //create from previous method a method to take as argument a list of DTOCreateRequest
 }
