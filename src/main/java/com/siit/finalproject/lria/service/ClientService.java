@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -31,6 +33,7 @@ public class ClientService {
     private final ClientDtoPostRequestToClientEntityMapper clientDtoPostRequestToClientEntityMapper;
     private final ClientEntityToClientDtoMapper clientEntityToClientDtoMapper;
     private final FlightRepository flightRepository;
+    private final TicketService ticketService;
 
     // get a all clients
     @Transactional(readOnly = true)
@@ -76,6 +79,7 @@ public class ClientService {
             if(availableTickets == 0) {
                 throw new TicketNotFoundException("This ticket not available for this flight");
             } else {
+                double ticketPrice = ticketService.getTicketPrice(clientDtoCreateRequest, availableTickets);
                 String updateSql = ("UPDATE flights SET " + ticketClass + "=" + (availableTickets-1) + " WHERE idflights = " + flightId);
                 preparedStatement.executeUpdate(updateSql);
                 connection.close();
@@ -100,6 +104,80 @@ public class ClientService {
 
 
     }
+
+    //create a test stream
+    @Transactional(readOnly = false)
+    public List<ClientDtoResponse> createClients2(List<ClientDtoCreateRequest> clientDtoCreateRequests) {
+        return clientDtoCreateRequests.stream()
+                                    .map(clientDtoCreateRequest -> clientDtoPostRequestToClientEntityMapper.mapDtoPostRequestToEntity(clientDtoCreateRequest))
+                                    .map(clientEntity -> clientRepository.save(clientEntity))
+                                    .map(clientEntitySaved -> clientEntityToClientDtoMapper.mapEntityToDto(clientEntitySaved))
+                                    .collect(toList());
+    }
+
+    //create a new list of clients / add a client to a flight
+    @Transactional(readOnly = false)
+    public List<ClientDtoResponse> createClients(List<ClientDtoCreateRequest> dtoCreateRequestList) {
+
+        List<ClientDtoCreateRequest> listToReturn= new ArrayList<>();
+
+        for (ClientDtoCreateRequest clientDtoCreateRequest : dtoCreateRequestList) {
+            int availableTickets = 0;
+
+            try(Connection connection = getConnection()) {
+                Integer ticket = clientDtoCreateRequest.getTicketId();
+                Integer flightId = clientDtoCreateRequest.getFlightId();
+                String ticketClass = "";
+
+                if (ticket == 1) {
+                    ticketClass = "available_firstclass_seats";
+                } else if (ticket == 2) {
+                    ticketClass = "available_bussiness_seats";
+                } else if (ticket == 3) {
+                    ticketClass = "available_economy_seats";
+                }
+
+                String sqlQuery = ("SELECT " + ticketClass + " FROM flights WHERE idflights = " + flightId);
+                PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while(resultSet.next()) {
+                    availableTickets = resultSet.getInt(ticketClass);
+
+                }
+
+
+                if(availableTickets == 0) {
+                  //  throw new TicketNotFoundException("This ticket not available for this flight");
+                } else {
+                    double ticketPrice = ticketService.getTicketPrice(clientDtoCreateRequest, availableTickets);
+
+
+                    String updateSql = ("UPDATE flights SET " + ticketClass + "=" + (availableTickets-1) + " WHERE idflights = " + flightId);
+                    preparedStatement.executeUpdate(updateSql);
+                    connection.close();
+
+//                    ClientEntity clientEntity = clientDtoPostRequestToClientEntityMapper.mapDtoPostRequestToEntity(clientDtoCreateRequest);
+//
+//                    ClientEntity savedEntity = clientRepository.save(clientEntity);
+//
+//
+                    listToReturn.add(clientDtoCreateRequest);
+
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        return createClients2(listToReturn);
+
+
+
+
+    }
+
 
     //get client by ID
     @Transactional(readOnly = true)

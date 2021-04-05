@@ -59,4 +59,8 @@ public class ClientRestController {
     }
 
     //create from previous method a method to take as argument a list of DTOCreateRequest
+    @PostMapping(value = "/bulk")
+    public List<ClientDtoResponse> createClients(@RequestBody @Valid List<ClientDtoCreateRequest> clientDtoCreateRequests) {
+        return clientService.createClients(clientDtoCreateRequests);
+    }
 }
