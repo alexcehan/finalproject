@@ -202,6 +202,44 @@ public class ClientService {
 
     }
 
+    @Transactional
+    public void deleteClientById(Integer id) throws SQLException{
+       if(clientRepository.existsById(id)) {
+           Connection connection = getConnection();
+           ClientDtoResponse clientDtoResponse = getClientById(id);
+           int flightId = clientDtoResponse.getFlight().getId();
+           int ticketId = clientDtoResponse.getTicket().getId();
+           String ticketClass = "";
+           int availableTickets = 0;
+
+           if (ticketId == 1) {
+               ticketClass = "available_firstclass_seats";
+           } else if (ticketId == 2) {
+               ticketClass = "available_bussiness_seats";
+           } else if (ticketId == 3) {
+               ticketClass = "available_economy_seats";
+           }
+
+           String sqlQuery = ("SELECT " + ticketClass + " FROM flights WHERE idflights = " + flightId);
+           PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+           ResultSet resultSet = preparedStatement.executeQuery();
+           while(resultSet.next()) {
+               availableTickets = resultSet.getInt(ticketClass);
+
+           }
+
+           if ( availableTickets != 0) {
+
+               String updateSql = ("UPDATE flights SET " + ticketClass + "=" + (availableTickets+1) + " WHERE idflights = " + flightId);
+               preparedStatement.executeUpdate(updateSql);
+               connection.close();
+
+           }
+           clientRepository.deleteById(id);
+       }
+
+    }
+
 
 
     private Connection getConnection() throws SQLException{
