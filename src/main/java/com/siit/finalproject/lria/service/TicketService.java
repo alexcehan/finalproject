@@ -1,18 +1,17 @@
 package com.siit.finalproject.lria.service;
-
 import com.siit.finalproject.lria.domain.entity.AirplaneEntity;
 import com.siit.finalproject.lria.domain.entity.DestinationEntity;
 import com.siit.finalproject.lria.domain.entity.FlightEntity;
 import com.siit.finalproject.lria.domain.entity.TicketEntity;
 import com.siit.finalproject.lria.domain.model.ClientDtoCreateRequest;
-import com.siit.finalproject.lria.repository.DestinationRepository;
 import com.siit.finalproject.lria.repository.FlightRepository;
 import com.siit.finalproject.lria.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.sql.Date;
 import java.sql.Time;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,16 +20,18 @@ import java.time.format.DateTimeFormatter;
 @RequiredArgsConstructor
 public class TicketService {
 
-    FlightRepository flightRepository;
-    TicketRepository ticketRepository;
-    DestinationRepository destinationRepository;
+    private final FlightRepository flightRepository;
+    private final TicketRepository ticketRepository;
 
-    public double getTicketPrice(ClientDtoCreateRequest clientDtoCreateRequest, int availableTickets) {
+
+    public ClientDtoCreateRequest getTicketPrice(ClientDtoCreateRequest clientDtoCreateRequest, int availableTickets) {
         FlightEntity flightEntity = flightRepository.findById(clientDtoCreateRequest.getFlightId()).orElseThrow();
         TicketEntity ticketEntity = ticketRepository.findById(clientDtoCreateRequest.getTicketId()).orElseThrow();
         DestinationEntity destinationEntity = flightEntity.getDestination();
         AirplaneEntity airplaneEntity = flightEntity.getAirplane();
-        int initialAvailableSeats = 0;
+        int initialAvailableSeats;
+        String seat;
+        NumberFormat numberFormat = new DecimalFormat("#0.00");
 
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -46,15 +47,25 @@ public class TicketService {
 
         if (ticketClass == 1) {
             initialAvailableSeats = airplaneEntity.getFirst_class_seats();
-            return ((distance * 0.02) * 15 + (30*(initialAvailableSeats/availableTickets)) + (720/hoursToTakeOf * 3));
+            clientDtoCreateRequest.setTicketPrice(Float.parseFloat(numberFormat.format((distance * 0.02f) * 15 + (30f*(initialAvailableSeats/availableTickets)) + (720f/hoursToTakeOf * 3))));
+            seat = ((initialAvailableSeats - availableTickets) + "A");
+            clientDtoCreateRequest.setSeat(seat);
+
         } else if (ticketClass == 2) {
-            initialAvailableSeats = airplaneEntity.getBussiness_class_seats();
-            return ((distance * 0.02) * 10 + (20*(initialAvailableSeats/availableTickets)) + (720/hoursToTakeOf * 2));
+            initialAvailableSeats = airplaneEntity.getBusiness_class_seats();
+            clientDtoCreateRequest.setTicketPrice(Float.parseFloat(numberFormat.format((distance * 0.02f) * 10 + (20f*(initialAvailableSeats/availableTickets)) + (720f/hoursToTakeOf * 2))));
+            seat = ((initialAvailableSeats - availableTickets) + "B");
+            clientDtoCreateRequest.setSeat(seat);
         } else {
             initialAvailableSeats = airplaneEntity.getEconomic_class_seats();
-            return ((distance * 0.02) * 4 + (10*(initialAvailableSeats/availableTickets)) + (720/hoursToTakeOf));
+            clientDtoCreateRequest.setTicketPrice(Float.parseFloat(numberFormat.format((distance * 0.02f) * 4 + (10f*(initialAvailableSeats/availableTickets)) + (720f/hoursToTakeOf))));
+            seat = ((initialAvailableSeats - availableTickets) + "C");
+            clientDtoCreateRequest.setSeat(seat);
         }
 
+
+
+        return clientDtoCreateRequest;
     }
 
 }

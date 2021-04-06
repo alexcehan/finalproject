@@ -1,11 +1,10 @@
 package com.siit.finalproject.lria.domain.model;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotBlank;
 
 @Data
 @Builder
@@ -27,6 +26,12 @@ public class ClientDtoCreateRequest {
     private Integer flightId;
 
     private Integer ticketId;
+
+    private Float ticketPrice;
+
+    private String seat;
+
+
 
 
 

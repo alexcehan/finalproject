@@ -22,4 +22,6 @@ public class ClientDtoUpdateRequest {
     private Integer flightId;
 
     private Integer ticketId;
+
+    private Float ticketPrice;
 }

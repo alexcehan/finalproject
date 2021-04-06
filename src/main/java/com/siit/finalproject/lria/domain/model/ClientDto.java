@@ -5,8 +5,6 @@ import com.siit.finalproject.lria.domain.entity.TicketEntity;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.persistence.criteria.CriteriaBuilder;
-
 @Builder
 @Data
 public class ClientDto {
@@ -22,4 +20,6 @@ public class ClientDto {
     private FlightEntity flight;
 
     private TicketEntity ticket;
+
+    private Float ticketPrice;
 }

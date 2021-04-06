@@ -27,4 +27,6 @@ public class TicketEntity {
     private boolean meal_included;
 
     private boolean drink_included;
+
+
 }

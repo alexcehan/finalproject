@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
@@ -40,4 +39,8 @@ public class ClientEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ticketid", referencedColumnName = "idticket_type")
     private TicketEntity ticket;
+
+    private Float ticketPrice;
+
+    private String seat;
 }

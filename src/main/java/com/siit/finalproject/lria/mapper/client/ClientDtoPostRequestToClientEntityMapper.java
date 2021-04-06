@@ -32,6 +32,8 @@ public class ClientDtoPostRequestToClientEntityMapper {
                         .orElseThrow(() -> new FlightNotFoundException("Flight Not Found for Id: " + clientDtoCreateRequest.getFlightId())))
                 .ticket(ticketRepository.findById(clientDtoCreateRequest.getTicketId())
                         .orElseThrow(() -> new TicketNotFoundException("Ticket not available for this id: " + clientDtoCreateRequest.getTicketId())))
+                .ticketPrice(clientDtoCreateRequest.getTicketPrice())
+                .seat(clientDtoCreateRequest.getSeat())
                 .build();
     }
 

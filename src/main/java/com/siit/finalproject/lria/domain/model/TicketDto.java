@@ -16,4 +16,6 @@ public class TicketDto {
     private boolean drink_included;
 
 
+
+
 }

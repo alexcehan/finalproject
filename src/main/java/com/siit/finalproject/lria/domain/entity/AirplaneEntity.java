@@ -33,7 +33,7 @@ public class AirplaneEntity {
 
     private Integer first_class_seats;
 
-    private Integer bussiness_class_seats;
+    private Integer business_class_seats;
 
     private Integer economic_class_seats;
 

@@ -24,6 +24,8 @@ public class ClientEntityToClientDtoMapper {
                 .age(clientEntity.getAge())
                 .flight(flightEntityToFlightDtoMapper.mapEntityToDto(clientEntity.getFlight()))
                 .ticket(ticketEntityToTicketDtoMapper.mapEntityToDto(clientEntity.getTicket()))
+                .ticketPrice(clientEntity.getTicketPrice())
+                .seat(clientEntity.getSeat())
                 .build();
     }
 }

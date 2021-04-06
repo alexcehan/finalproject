@@ -3,8 +3,6 @@ package com.siit.finalproject.lria.controller;
 
 import com.siit.finalproject.lria.domain.model.ClientDtoCreateRequest;
 import com.siit.finalproject.lria.domain.model.ClientDtoResponse;
-import com.siit.finalproject.lria.domain.model.FlightDtoResponse;
-import com.siit.finalproject.lria.repository.ClientRepository;
 import com.siit.finalproject.lria.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

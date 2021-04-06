@@ -24,4 +24,8 @@ public class ClientDtoResponse {
     private FlightDtoResponse flight;
 
     private TicketDto ticket;
+
+    private Float ticketPrice;
+
+    private String seat;
 }

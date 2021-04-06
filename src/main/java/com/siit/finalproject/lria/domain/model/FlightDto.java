@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.criteria.CriteriaBuilder;
+
 import java.sql.Date;
 import java.sql.Time;
 
@@ -30,9 +30,5 @@ public class FlightDto {
 
     private CrewEntity crew;
 
-//    private Integer available_firstclass_seats;
-//
-//    private Integer available_bussiness_seats;
-//
-//    private Integer available_economy_seats;
+
 }

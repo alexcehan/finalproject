@@ -1,7 +1,6 @@
 package com.siit.finalproject.lria.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.siit.finalproject.lria.domain.entity.DestinationEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

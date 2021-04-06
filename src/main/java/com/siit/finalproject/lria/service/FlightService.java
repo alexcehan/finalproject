@@ -27,7 +27,7 @@ public class FlightService {
     public List<FlightDtoResponse> getAllFlights() {
         return flightRepository.findAll()
                 .stream()
-                .map(flightEntity -> flightEntityToFlightDtoMapper.mapEntityToDto(flightEntity))
+                .map(flightEntityToFlightDtoMapper::mapEntityToDto)
                 .collect(toList());
     }
 
@@ -40,7 +40,7 @@ public class FlightService {
     public List<FlightDtoResponse> getAllFlightsByDate(Date date) {
         return flightRepository.findAllByDate(date)
                 .stream()
-                .map(flightEntity -> flightEntityToFlightDtoMapper.mapEntityToDto(flightEntity))
+                .map(flightEntityToFlightDtoMapper::mapEntityToDto)
                 .collect(toList());
     }
 
@@ -49,7 +49,7 @@ public class FlightService {
 
         return flightRepository.findAllByDestination(destinationEntity)
                 .stream()
-                .map(flightEntity -> flightEntityToFlightDtoMapper.mapEntityToDto(flightEntity))
+                .map(flightEntityToFlightDtoMapper::mapEntityToDto)
                 .collect(toList());
     }
 
@@ -59,7 +59,7 @@ public class FlightService {
 
         return flightRepository.findAllByDestinationAndDate(destinationEntity, date)
                 .stream()
-                .map(flightEntity -> flightEntityToFlightDtoMapper.mapEntityToDto(flightEntity))
+                .map(flightEntityToFlightDtoMapper::mapEntityToDto)
                 .collect(toList());
 
 
