@@ -6,8 +6,10 @@ import com.siit.finalproject.lria.domain.model.ClientDtoResponse;
 import com.siit.finalproject.lria.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -60,5 +62,17 @@ public class ClientRestController {
     @PostMapping(value = "/bulk")
     public List<ClientDtoResponse> createClients(@RequestBody @Valid List<ClientDtoCreateRequest> clientDtoCreateRequests) {
         return clientService.createClients(clientDtoCreateRequests);
+    }
+
+    @PostMapping("/csv-upload")
+    public List<ClientDtoResponse> createClients(@RequestParam(name = "csv-file")MultipartFile file) {
+        return clientService.createClientsFromFile(file);
+    }
+
+    //delete client using clientId
+    @DeleteMapping(value = "/{clientId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteClientById(@PathVariable(name = "clientId")Integer clientId) {
+        clientService.deleteClientById(clientId);
     }
 }

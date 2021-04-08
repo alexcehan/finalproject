@@ -49,4 +49,6 @@ public class FlightRestController {
                                                                      @RequestParam(name = "date") Date date) {
         return flightService.getAllFlightsByDestinationAndDate(city, date);
     }
+
+
 }
