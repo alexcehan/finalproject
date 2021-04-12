@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ClientDtoUpdateRequest {
 
-    private Integer idclients;
+    private Integer id;
 
     private String firstName;
 

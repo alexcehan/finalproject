@@ -3,6 +3,7 @@ package com.siit.finalproject.lria.controller;
 
 import com.siit.finalproject.lria.domain.model.ClientDtoCreateRequest;
 import com.siit.finalproject.lria.domain.model.ClientDtoResponse;
+import com.siit.finalproject.lria.domain.model.ClientDtoUpdateRequest;
 import com.siit.finalproject.lria.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,13 @@ public class ClientRestController {
     @GetMapping(value = "/clientsByFlightId", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ClientDtoResponse> getClientsByFlightId(@RequestParam(name = "flightId")Integer flightId) {
         return clientService.getClientByFlightId(flightId);
+    }
+
+    @PutMapping(value = "/{id}", consumes = "application/json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ClientDtoResponse updateClient(@PathVariable(name = "id")Integer clientId,
+                                          @RequestBody @Valid ClientDtoUpdateRequest clientDtoUpdateRequest) {
+        clientDtoUpdateRequest.setId(clientId);
+        return clientService.updateClient(clientDtoUpdateRequest);
     }
 
 

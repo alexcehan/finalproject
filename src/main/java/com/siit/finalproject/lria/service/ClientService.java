@@ -2,13 +2,17 @@ package com.siit.finalproject.lria.service;
 import com.siit.finalproject.lria.domain.entity.ClientEntity;
 import com.siit.finalproject.lria.domain.model.ClientDtoCreateRequest;
 import com.siit.finalproject.lria.domain.model.ClientDtoResponse;
+import com.siit.finalproject.lria.domain.model.ClientDtoUpdateRequest;
 import com.siit.finalproject.lria.exception.ClientNotFoundException;
+import com.siit.finalproject.lria.exception.FlightNotFoundException;
 import com.siit.finalproject.lria.exception.TicketNotFoundException;
 import com.siit.finalproject.lria.mapper.client.ClientDtoPostRequestToClientEntityMapper;
 import com.siit.finalproject.lria.mapper.client.ClientDtoToClientDtoCreateRequest;
 import com.siit.finalproject.lria.mapper.client.ClientEntityToClientDtoMapper;
 import com.siit.finalproject.lria.repository.ClientRepository;
 
+import com.siit.finalproject.lria.repository.FlightRepository;
+import com.siit.finalproject.lria.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -31,6 +35,8 @@ public class ClientService {
     private final ClientEntityToClientDtoMapper clientEntityToClientDtoMapper;
     private final TicketService ticketService;
     private final ClientDtoToClientDtoCreateRequest clientDtoToClientDtoCreateRequest;
+    private final FlightRepository flightRepository;
+    private final TicketRepository ticketRepository;
 
     // get a all clients
     @Transactional(readOnly = true)
@@ -271,6 +277,20 @@ public class ClientService {
         clientRepository.deleteById(id);
     }
 
+    @Transactional
+    public ClientDtoResponse updateClient(ClientDtoUpdateRequest clientDtoUpdateRequest) {
+        ClientEntity clientEntity = clientRepository.findById(clientDtoUpdateRequest.getId()).orElseThrow(() -> new ClientNotFoundException("Client not found by this id: " + clientDtoUpdateRequest.getId()));
+
+
+
+        clientEntity.setFlight(flightRepository.findById(clientDtoUpdateRequest.getFlightId()).orElseThrow(() -> new FlightNotFoundException("No flight found for the given id: "+ clientDtoUpdateRequest.getFlightId())));
+        clientEntity.setTicket(ticketRepository.findById(clientDtoUpdateRequest.getTicketId()).orElseThrow(()-> new TicketNotFoundException("No ticket found for the given Id " + clientDtoUpdateRequest.getTicketId())));
+        updateDbAvailableTicketsIncrease(clientDtoUpdateRequest.getId());
+
+        ClientDtoCreateRequest clientDtoCreateRequest = clientDtoToClientDtoCreateRequest.mapDtoToDtoCreateRequest(clientEntityToClientDtoMapper.mapEntityToDto(clientEntity));
+        return clientEntityToClientDtoMapper.mapEntityToDto(clientDtoPostRequestToClientEntityMapper.mapDtoPostRequestToEntity(clientDtoCreateRequest));
+    }
+
 
 
     //this method is meant to update the available tickets columns in DB once a client is created or deleted
@@ -361,43 +381,43 @@ public class ClientService {
         return ticketClass;
     }
 
-    @Transactional
-    public void deleteClientById(Integer id) throws SQLException{
-       if(clientRepository.existsById(id)) {
-           Connection connection = getConnection();
-           ClientDtoResponse clientDtoResponse = getClientById(id);
-           int flightId = clientDtoResponse.getFlight().getId();
-           int ticketId = clientDtoResponse.getTicket().getId();
-           String ticketClass = "";
-           int availableTickets = 0;
-
-           if (ticketId == 1) {
-               ticketClass = "available_firstclass_seats";
-           } else if (ticketId == 2) {
-               ticketClass = "available_bussiness_seats";
-           } else if (ticketId == 3) {
-               ticketClass = "available_economy_seats";
-           }
-
-           String sqlQuery = ("SELECT " + ticketClass + " FROM flights WHERE idflights = " + flightId);
-           PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
-           ResultSet resultSet = preparedStatement.executeQuery();
-           while(resultSet.next()) {
-               availableTickets = resultSet.getInt(ticketClass);
-
-           }
-
-           if ( availableTickets != 0) {
-
-               String updateSql = ("UPDATE flights SET " + ticketClass + "=" + (availableTickets+1) + " WHERE idflights = " + flightId);
-               preparedStatement.executeUpdate(updateSql);
-               connection.close();
-
-           }
-           clientRepository.deleteById(id);
-       }
-
-    }
+//    @Transactional
+//    public void deleteClientById(Integer id) throws SQLException{
+//       if(clientRepository.existsById(id)) {
+//           Connection connection = getConnection();
+//           ClientDtoResponse clientDtoResponse = getClientById(id);
+//           int flightId = clientDtoResponse.getFlight().getId();
+//           int ticketId = clientDtoResponse.getTicket().getId();
+//           String ticketClass = "";
+//           int availableTickets = 0;
+//
+//           if (ticketId == 1) {
+//               ticketClass = "available_firstclass_seats";
+//           } else if (ticketId == 2) {
+//               ticketClass = "available_bussiness_seats";
+//           } else if (ticketId == 3) {
+//               ticketClass = "available_economy_seats";
+//           }
+//
+//           String sqlQuery = ("SELECT " + ticketClass + " FROM flights WHERE idflights = " + flightId);
+//           PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+//           ResultSet resultSet = preparedStatement.executeQuery();
+//           while(resultSet.next()) {
+//               availableTickets = resultSet.getInt(ticketClass);
+//
+//           }
+//
+//           if ( availableTickets != 0) {
+//
+//               String updateSql = ("UPDATE flights SET " + ticketClass + "=" + (availableTickets+1) + " WHERE idflights = " + flightId);
+//               preparedStatement.executeUpdate(updateSql);
+//               connection.close();
+//
+//           }
+//           clientRepository.deleteById(id);
+//       }
+//
+//    }
 
 
 
