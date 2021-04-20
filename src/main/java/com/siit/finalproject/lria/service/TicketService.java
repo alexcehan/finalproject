@@ -4,6 +4,8 @@ import com.siit.finalproject.lria.domain.entity.DestinationEntity;
 import com.siit.finalproject.lria.domain.entity.FlightEntity;
 import com.siit.finalproject.lria.domain.entity.TicketEntity;
 import com.siit.finalproject.lria.domain.model.ClientDtoCreateRequest;
+import com.siit.finalproject.lria.exception.FlightNotFoundException;
+import com.siit.finalproject.lria.exception.TicketNotFoundException;
 import com.siit.finalproject.lria.repository.FlightRepository;
 import com.siit.finalproject.lria.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +27,8 @@ public class TicketService {
 
 
     public ClientDtoCreateRequest getTicketPrice(ClientDtoCreateRequest clientDtoCreateRequest, int availableTickets) {
-        FlightEntity flightEntity = flightRepository.findById(clientDtoCreateRequest.getFlightId()).orElseThrow();
-        TicketEntity ticketEntity = ticketRepository.findById(clientDtoCreateRequest.getTicketId()).orElseThrow();
+        FlightEntity flightEntity = flightRepository.findById(clientDtoCreateRequest.getFlightId()).orElseThrow(()-> new FlightNotFoundException("No flight found for the given id: "+clientDtoCreateRequest.getFlightId()));
+        TicketEntity ticketEntity = ticketRepository.findById(clientDtoCreateRequest.getTicketId()).orElseThrow(()-> new TicketNotFoundException("No ticket type found for the given id: "+clientDtoCreateRequest.getTicketId()));
         DestinationEntity destinationEntity = flightEntity.getDestination();
         AirplaneEntity airplaneEntity = flightEntity.getAirplane();
         int initialAvailableSeats;

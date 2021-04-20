@@ -37,6 +37,7 @@ public class ClientService {
     private final ClientDtoToClientDtoCreateRequest clientDtoToClientDtoCreateRequest;
     private final FlightRepository flightRepository;
     private final TicketRepository ticketRepository;
+    //private final ClientDtoCreateRequest clientDtoCreateRequest;
 
     // get a all clients
     @Transactional(readOnly = true)
@@ -109,6 +110,9 @@ public class ClientService {
 
 
                 updateDbAvailableTicketsDecrease(clientDtoCreateRequest);
+                if (clientDtoCreateRequest.getSeat().equals("ZZ")) {
+                    throw new TicketNotFoundException("No ticket available for this flight");
+                }
                 ClientEntity clientEntity = clientDtoPostRequestToClientEntityMapper.mapDtoPostRequestToEntity(clientDtoCreateRequest);
 
 
@@ -286,9 +290,16 @@ public class ClientService {
         clientEntity.setFlight(flightRepository.findById(clientDtoUpdateRequest.getFlightId()).orElseThrow(() -> new FlightNotFoundException("No flight found for the given id: "+ clientDtoUpdateRequest.getFlightId())));
         clientEntity.setTicket(ticketRepository.findById(clientDtoUpdateRequest.getTicketId()).orElseThrow(()-> new TicketNotFoundException("No ticket found for the given Id " + clientDtoUpdateRequest.getTicketId())));
         updateDbAvailableTicketsIncrease(clientDtoUpdateRequest.getId());
+       // updateDbAvailableTicketsDecrease(clientDtoToClientDtoCreateRequest.mapDtoToDtoCreateRequest(clientEntityToClientDtoMapper.mapEntityToDto(clientEntity)));
 
         ClientDtoCreateRequest clientDtoCreateRequest = clientDtoToClientDtoCreateRequest.mapDtoToDtoCreateRequest(clientEntityToClientDtoMapper.mapEntityToDto(clientEntity));
-        return clientEntityToClientDtoMapper.mapEntityToDto(clientDtoPostRequestToClientEntityMapper.mapDtoPostRequestToEntity(clientDtoCreateRequest));
+        clientDtoCreateRequest = updateDbAvailableTicketsDecrease(clientDtoCreateRequest);
+
+        clientEntity.setTicketPrice(clientDtoCreateRequest.getTicketPrice());
+        clientEntity.setSeat(clientDtoCreateRequest.getSeat());
+
+        ClientDtoCreateRequest clientDtoCreateRequest1 = clientDtoToClientDtoCreateRequest.mapDtoToDtoCreateRequest(clientEntityToClientDtoMapper.mapEntityToDto(clientEntity));
+        return clientEntityToClientDtoMapper.mapEntityToDto(clientDtoPostRequestToClientEntityMapper.mapDtoPostRequestToEntity(clientDtoCreateRequest1));
     }
 
 
@@ -425,8 +436,8 @@ public class ClientService {
     private Connection getConnection() {
 
         String url = "jdbc:mysql://localhost:3306/lria";
-        String uname = "alex";
-        String password = "password";
+        String uname = "root";
+        String password = "root";
 
 
         return DriverManager.getConnection(url, uname, password);

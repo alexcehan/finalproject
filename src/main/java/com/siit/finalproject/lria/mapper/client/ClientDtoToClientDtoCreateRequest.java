@@ -17,7 +17,11 @@ public class ClientDtoToClientDtoCreateRequest {
     public ClientDtoCreateRequest mapDtoToDtoCreateRequest(ClientDtoResponse clientDtoResponse) {
 
         return ClientDtoCreateRequest.builder()
+                .id(clientDtoResponse.getId())
+                .flightId(clientDtoResponse.getFlight().getId())
                 .ticketId(clientDtoResponse.getTicket().getId())
+                .ticketPrice(clientDtoResponse.getTicketPrice())
+                .seat(clientDtoResponse.getSeat())
                 .build();
 
     }
