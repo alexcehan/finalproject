@@ -50,18 +50,18 @@ public class TicketService {
         if (ticketClass == 1) {
             initialAvailableSeats = airplaneEntity.getFirst_class_seats();
             clientDtoCreateRequest.setTicketPrice(Float.parseFloat(numberFormat.format((distance * 0.02f) * 15 + (30f*(initialAvailableSeats/availableTickets)) + (720f/hoursToTakeOf * 3))));
-            seat = ((initialAvailableSeats - availableTickets) + "A");
+            seat = ((initialAvailableSeats - availableTickets + 1) + "A");
             clientDtoCreateRequest.setSeat(seat);
 
         } else if (ticketClass == 2) {
             initialAvailableSeats = airplaneEntity.getBusiness_class_seats();
             clientDtoCreateRequest.setTicketPrice(Float.parseFloat(numberFormat.format((distance * 0.02f) * 10 + (20f*(initialAvailableSeats/availableTickets)) + (720f/hoursToTakeOf * 2))));
-            seat = ((initialAvailableSeats - availableTickets) + "B");
+            seat = ((initialAvailableSeats - availableTickets + 1) + "B");
             clientDtoCreateRequest.setSeat(seat);
         } else {
             initialAvailableSeats = airplaneEntity.getEconomic_class_seats();
             clientDtoCreateRequest.setTicketPrice(Float.parseFloat(numberFormat.format((distance * 0.02f) * 4 + (10f*(initialAvailableSeats/availableTickets)) + (720f/hoursToTakeOf))));
-            seat = ((initialAvailableSeats - availableTickets) + "C");
+            seat = ((initialAvailableSeats - availableTickets + 1) + "C");
             clientDtoCreateRequest.setSeat(seat);
         }
 

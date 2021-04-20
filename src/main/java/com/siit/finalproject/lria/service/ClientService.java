@@ -1,5 +1,8 @@
 package com.siit.finalproject.lria.service;
 import com.siit.finalproject.lria.domain.entity.ClientEntity;
+import com.siit.finalproject.lria.domain.entity.DestinationEntity;
+import com.siit.finalproject.lria.domain.entity.FlightEntity;
+import com.siit.finalproject.lria.domain.model.ClientDto;
 import com.siit.finalproject.lria.domain.model.ClientDtoCreateRequest;
 import com.siit.finalproject.lria.domain.model.ClientDtoResponse;
 import com.siit.finalproject.lria.domain.model.ClientDtoUpdateRequest;
@@ -11,6 +14,7 @@ import com.siit.finalproject.lria.mapper.client.ClientDtoToClientDtoCreateReques
 import com.siit.finalproject.lria.mapper.client.ClientEntityToClientDtoMapper;
 import com.siit.finalproject.lria.repository.ClientRepository;
 
+import com.siit.finalproject.lria.repository.DestinationRepository;
 import com.siit.finalproject.lria.repository.FlightRepository;
 import com.siit.finalproject.lria.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
@@ -58,54 +62,7 @@ public class ClientService {
     public ClientDtoResponse createClient(ClientDtoCreateRequest clientDtoCreateRequest) {
 
 
-//        int availableTickets = 0;
-//
-//        try(Connection connection = getConnection()) {
-//            Integer ticket = clientDtoCreateRequest.getTicketId();
-//            Integer flightId = clientDtoCreateRequest.getFlightId();
-//            String ticketClass = "";
-//
-//            if (ticket == 1) {
-//                ticketClass = "available_firstclass_seats";
-//            } else if (ticket == 2) {
-//                ticketClass = "available_bussiness_seats";
-//            } else if (ticket == 3) {
-//                ticketClass = "available_economy_seats";
-//            }
-//
-//            String sqlQuery = ("SELECT " + ticketClass + " FROM flights WHERE idflights = " + flightId);
-//            PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
-//            ResultSet resultSet = preparedStatement.executeQuery();
-//            while(resultSet.next()) {
-//                 availableTickets = resultSet.getInt(ticketClass);
-//
-//            }
-//
-//
-//            if(availableTickets == 0) {
-//                throw new TicketNotFoundException("This ticket not available for this flight");
-//            } else {
-//                ClientDtoCreateRequest clientDtoCreateRequestPriceUpdated = ticketService.getTicketPrice(clientDtoCreateRequest, availableTickets);
-//
-//                String updateSql = ("UPDATE flights SET " + ticketClass + "=" + (availableTickets-1) + " WHERE idflights = " + flightId);
-//                preparedStatement.executeUpdate(updateSql);
-//                connection.close();
-//
-//                ClientEntity clientEntity = clientDtoPostRequestToClientEntityMapper.mapDtoPostRequestToEntity(clientDtoCreateRequestPriceUpdated);
-//
-//                ClientEntity savedEntity = clientRepository.save(clientEntity);
-//
-//
-//                return clientEntityToClientDtoMapper.mapEntityToDto(savedEntity);
-//
-//            }
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//        return null;
+
 
 
 
@@ -126,56 +83,6 @@ public class ClientService {
     }
 
 
-    //create a new list of clients / add a client to a flight
-//    @Transactional
-//    public List<ClientDtoResponse> createClients(List<ClientDtoCreateRequest> dtoCreateRequestList) {
-//
-//        List<ClientDtoCreateRequest> listToReturn= new ArrayList<>();
-//
-//        for (ClientDtoCreateRequest clientDtoCreateRequest : dtoCreateRequestList) {
-//            int availableTickets = 0;
-//
-//            try(Connection connection = getConnection()) {
-//                Integer ticket = clientDtoCreateRequest.getTicketId();
-//                Integer flightId = clientDtoCreateRequest.getFlightId();
-//                String ticketClass = "";
-//
-//                if (ticket == 1) {
-//                    ticketClass = "available_firstclass_seats";
-//                } else if (ticket == 2) {
-//                    ticketClass = "available_bussiness_seats";
-//                } else if (ticket == 3) {
-//                    ticketClass = "available_economy_seats";
-//                }
-//
-//                String sqlQuery = ("SELECT " + ticketClass + " FROM flights WHERE idflights = " + flightId);
-//                PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
-//                ResultSet resultSet = preparedStatement.executeQuery();
-//                while(resultSet.next()) {
-//                    availableTickets = resultSet.getInt(ticketClass);
-//
-//                }
-//
-//
-//                if(availableTickets != 0) {
-//
-//                    String updateSql = ("UPDATE flights SET " + ticketClass + "=" + (availableTickets-1) + " WHERE idflights = " + flightId);
-//                    preparedStatement.executeUpdate(updateSql);
-//                    connection.close();
-//
-//
-//                    listToReturn.add(clientDtoCreateRequest);
-//
-//                }
-//
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return createClients2(listToReturn);
-//
-//    }
 
 
     //get client by ID
@@ -266,13 +173,7 @@ public class ClientService {
 
         return createClients(clientsToCreateList);
 
-//        return clientsToCreateList.stream().parallel()
-//                .map(this::updateDbAvailableTicketsDecrease)
-//                .map(clientDtoPostRequestToClientEntityMapper::mapDtoPostRequestToEntity)
-//                .map(clientRepository::save)
-//                .map(clientEntityToClientDtoMapper::mapEntityToDto)
-//                .collect(toList());
-      //  return list;
+
     }
 
     @Transactional
@@ -281,20 +182,45 @@ public class ClientService {
         clientRepository.deleteById(id);
     }
 
+    public void checkIfUpdatePossible(ClientDtoUpdateRequest clientDtoUpdateRequest) {
+
+        ClientEntity clientEntity = clientRepository.findById(clientDtoUpdateRequest.getId()).orElseThrow(() -> new ClientNotFoundException("Client not found by this id: " + clientDtoUpdateRequest.getId()));
+        FlightEntity flightEntity = flightRepository.findById(clientDtoUpdateRequest.getFlightId()).orElseThrow(()-> new FlightNotFoundException("No flight found with this id: + " + clientDtoUpdateRequest.getFlightId()));
+
+
+        if ((clientEntity.getFlight().getId().equals(clientDtoUpdateRequest.getFlightId()))&& (clientEntity.getTicket().getId().equals(clientDtoUpdateRequest.getTicketId()))) {
+            throw new TicketNotFoundException("There is already one thicket bought for this client");
+        }
+
+        if (!clientEntity.getFlight().getDestination().getCity().equals(flightEntity.getDestination().getCity())) {
+            throw new TicketNotFoundException("You can't update ticket to a different destination");
+        }
+    }
+
     @Transactional
     public ClientDtoResponse updateClient(ClientDtoUpdateRequest clientDtoUpdateRequest) {
         ClientEntity clientEntity = clientRepository.findById(clientDtoUpdateRequest.getId()).orElseThrow(() -> new ClientNotFoundException("Client not found by this id: " + clientDtoUpdateRequest.getId()));
 
 
+        checkIfUpdatePossible(clientDtoUpdateRequest);
 
-        clientEntity.setFlight(flightRepository.findById(clientDtoUpdateRequest.getFlightId()).orElseThrow(() -> new FlightNotFoundException("No flight found for the given id: "+ clientDtoUpdateRequest.getFlightId())));
-        clientEntity.setTicket(ticketRepository.findById(clientDtoUpdateRequest.getTicketId()).orElseThrow(()-> new TicketNotFoundException("No ticket found for the given Id " + clientDtoUpdateRequest.getTicketId())));
-        updateDbAvailableTicketsIncrease(clientDtoUpdateRequest.getId());
+
+
        // updateDbAvailableTicketsDecrease(clientDtoToClientDtoCreateRequest.mapDtoToDtoCreateRequest(clientEntityToClientDtoMapper.mapEntityToDto(clientEntity)));
 
         ClientDtoCreateRequest clientDtoCreateRequest = clientDtoToClientDtoCreateRequest.mapDtoToDtoCreateRequest(clientEntityToClientDtoMapper.mapEntityToDto(clientEntity));
-        clientDtoCreateRequest = updateDbAvailableTicketsDecrease(clientDtoCreateRequest);
+        clientDtoCreateRequest.setFlightId(clientDtoUpdateRequest.getFlightId());
+        clientDtoCreateRequest.setTicketId(clientDtoUpdateRequest.getTicketId());
+        updateDbAvailableTicketsDecrease(clientDtoCreateRequest);
 
+        if (clientDtoCreateRequest.getSeat().equals("ZZ")) {
+            throw new TicketNotFoundException("No ticket available for this flight at this class");
+        }
+        updateDbAvailableTicketsIncrease(clientDtoUpdateRequest.getId());
+
+
+        clientEntity.setFlight(flightRepository.findById(clientDtoUpdateRequest.getFlightId()).orElseThrow(() -> new FlightNotFoundException("No flight found for the given id: "+ clientDtoUpdateRequest.getFlightId())));
+        clientEntity.setTicket(ticketRepository.findById(clientDtoUpdateRequest.getTicketId()).orElseThrow(()-> new TicketNotFoundException("No ticket found for the given Id " + clientDtoUpdateRequest.getTicketId())));
         clientEntity.setTicketPrice(clientDtoCreateRequest.getTicketPrice());
         clientEntity.setSeat(clientDtoCreateRequest.getSeat());
 
@@ -352,7 +278,7 @@ public class ClientService {
         int flightId = clientDtoResponse.getFlight().getId();
 
         try(Connection connection = getConnection()) {
-           // Integer flightId = clientDtoCreateRequest.getFlightId();
+
             String ticketClass = getTicketClass(clientDtoToClientDtoCreateRequest.mapDtoToDtoCreateRequest(clientDtoResponse));
 
 
@@ -392,43 +318,7 @@ public class ClientService {
         return ticketClass;
     }
 
-//    @Transactional
-//    public void deleteClientById(Integer id) throws SQLException{
-//       if(clientRepository.existsById(id)) {
-//           Connection connection = getConnection();
-//           ClientDtoResponse clientDtoResponse = getClientById(id);
-//           int flightId = clientDtoResponse.getFlight().getId();
-//           int ticketId = clientDtoResponse.getTicket().getId();
-//           String ticketClass = "";
-//           int availableTickets = 0;
-//
-//           if (ticketId == 1) {
-//               ticketClass = "available_firstclass_seats";
-//           } else if (ticketId == 2) {
-//               ticketClass = "available_bussiness_seats";
-//           } else if (ticketId == 3) {
-//               ticketClass = "available_economy_seats";
-//           }
-//
-//           String sqlQuery = ("SELECT " + ticketClass + " FROM flights WHERE idflights = " + flightId);
-//           PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
-//           ResultSet resultSet = preparedStatement.executeQuery();
-//           while(resultSet.next()) {
-//               availableTickets = resultSet.getInt(ticketClass);
-//
-//           }
-//
-//           if ( availableTickets != 0) {
-//
-//               String updateSql = ("UPDATE flights SET " + ticketClass + "=" + (availableTickets+1) + " WHERE idflights = " + flightId);
-//               preparedStatement.executeUpdate(updateSql);
-//               connection.close();
-//
-//           }
-//           clientRepository.deleteById(id);
-//       }
-//
-//    }
+
 
 
 
